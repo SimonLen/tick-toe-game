@@ -1,24 +1,30 @@
-field_size = 3
-field = [["-"] * field_size for i in range(field_size)]
+field = [["-"] * 3 for i in range(3)]
+turn_counter = 0
 
-PLAYER_NAME = None
-player_symbol = None
-computer_symbol = None
 
-def show():
+def greet():
+    print("----------------------")
+    print("   Добро пожаловать   ")
+    print("в игру крестики-нолики")
+    print("----------------------")
+    print("  формат ввода:  x y  ")
+    print("x - координата строки ")
+    print("y - координата столбца")
+    print("----------------------")
+
+
+def show_field():
     print()
     print("  1 2 3")
-    for i, row in enumerate(field, start = 1):
+    for i, row in enumerate(field, start=1):
         row_str = f"{i} {' '.join(row)} "
         print(row_str)
     print()
 
-# show()
 
 def player_turn():
     while True:
-        coords = input('Введите координаты вашего хода: ').split('')
-        print(coords)
+        coords = input('Введите координаты: ').split()
 
         if len(coords) != 2:
             print('Упс! Введите 2 координаты.')
@@ -31,42 +37,87 @@ def player_turn():
             continue
 
         x, y = int(x), int(y)
+        x -= 1
+        y -= 1
 
-        if 1 <= x <=3 and 1 <= y <=3:
+        if x < 0 or x > 2 or y < 0 or y > 2:
             print('Упс! Координаты вне игрового поля.')
             continue
 
-        if field[x][y] == '-':
+        if field[x][y] != '-':
             print('Упс! Клетка уже занята.')
             continue
 
-        print(x, y)
         return x, y
 
 
-def lottery():
-    while True:
-        player_symbol = input(f'{PLAYER_NAME}, ты будешь играть "крестиками" или "ноликами"? Напечатай X или 0: ')
-        if player_symbol in ['x', 'X', 'Х', 'х']:
-            player_symbol = 'X'
-            computer_symbol = '0'
-            print('Хорошо! Ты играешь "крестиками", а я - "ноликами". Приступим.')
-            return player_symbol, computer_symbol
-        elif player_symbol in ['0', 'O', 'o', 'О', 'о']:
-            player_symbol = '0'
-            computer_symbol = 'X'
-            print('Хорошо! Ты играешь "ноликами", а я - "крестиками". Приступим.')
-            return player_symbol, computer_symbol
-        else:
-            print(f'{PLAYER_NAME}, хорошая попытка, но таким сиволом мы не играем. Давай попробуем сделать выбор еще раз.')
+def check_win():
+    for i in range(3):
+        symbols = []
+        for j in range(3):
+            symbols.append(field[i][j])
+        if symbols == ['X', 'X', 'X']:
+            return 'Выиграл крестик!'
+        elif symbols == ['0', '0', '0']:
+            return ' Выиграл нолик! '
+
+    for i in range(3):
+        symbols = []
+        for j in range(3):
+            symbols.append(field[j][i])
+        if symbols == ['X', 'X', 'X']:
+            return 'Выиграл крестик!'
+        elif symbols == ['0', '0', '0']:
+            return ' Выиграл нолик! '
+
+    symbols = []
+    for i in range(3):
+        symbols.append(field[i][i])
+    if symbols == ['X', 'X', 'X']:
+        return 'Выиграл крестик!'
+    elif symbols == ['0', '0', '0']:
+        return ' Выиграл нолик! '
+
+    symbols = []
+    for i in range(3):
+        symbols.append(field[i][2-i])
+    if symbols == ['X', 'X', 'X']:
+        return 'Выиграл крестик!'
+    elif symbols == ['0', '0', '0']:
+        return ' Выиграл нолик! '
+
+    return False
 
 
-def game():
-    print('Добро пожаловать в игру крестики-нолики!')
-    PLAYER_NAME = input('Как тебя зовут? ')
-    print(f'Приятно познакомиться, {PLAYER_NAME}! Давай я тебе вкратце расскажу правила игры.')
-    print('----правила----')
-    lottery()
-    show()
+greet()
 
-player_turn()
+while True:
+    turn_counter += 1
+
+    show_field()
+
+    if turn_counter % 2 == 0:
+        print("Ходит НОЛИК")
+    else:
+        print("Ходит КРЕСТИК")
+
+    x, y = player_turn()
+
+    if turn_counter % 2 == 0:
+        field[x][y] = "0"
+    else:
+        field[x][y] = "X"
+
+    if check_win() is not False:
+        show_field()
+        print("----------------------")
+        print(f"-- {check_win()} --")
+        print("----------------------")
+        break
+
+    if turn_counter == 9:
+        show_field()
+        print("----------------------")
+        print("------- Ничья! -------")
+        print("----------------------")
+        break
