@@ -114,8 +114,7 @@ while True:
         print(f"-- {check_win()} --")
         print("----------------------")
         break
-
-    if turn_counter == 9:
+    elif turn_counter == 9:
         show_field()
         print("----------------------")
         print("------- Ничья! -------")
