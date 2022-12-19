@@ -1,2 +1,2 @@
 # tick-toe-game
-Tick-toe game realization using Python using console
+Tick-toe game (console edition) realization using Python
